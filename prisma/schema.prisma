@@ -62,14 +62,12 @@ model Payment {
   subscription      Subscription?
   
   xenditInvoiceId   String?       @unique
-  xenditPaymentId   String?       @unique
   xenditExternalId  String        @unique
+  paymentUrl        String?
   
   amount            Decimal       @db.Money
-  paymentMethod     PaymentMethod
+  paymentMethod     PaymentMethod?
   status            PaymentStatus @default(PENDING)
-  
-  xenditCallbackData Json?
   
   paidAt            DateTime?     @db.Timestamptz()
   expiresAt         DateTime?     @db.Timestamptz()
@@ -86,17 +84,19 @@ enum SubscriptionStatus {
 enum PaymentStatus {
   PENDING
   PAID
-  FAILED
   EXPIRED
-  CANCELLED
 }
 
 enum PaymentMethod {
-  VIRTUAL_ACCOUNT
   CREDIT_CARD
-  DEBIT_CARD
+  BCA
+  BNI
+  BRI
+  MANDIRI
+  PERMATA
+  BSI
+  CIMB
   QRIS
-  OTHER
 }
 
 model Class {
