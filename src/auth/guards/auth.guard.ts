@@ -24,12 +24,12 @@ export class AuthGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    if (isPublic) return true;
     const request = context.switchToHttp().getRequest();
 
     const rawToken = this.extractTokenFromHeader(request);
 
     if (!rawToken) {
+      if (isPublic) return true;
       throw new UnauthorizedException('token not provided');
     }
 
