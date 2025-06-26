@@ -11,6 +11,7 @@ import * as bcrypt from 'bcryptjs';
 import { RegisterDTO } from './dto/register.dto';
 import refreshJwtConfig from './configs/refresh-jwt.config';
 import { ConfigType } from '@nestjs/config';
+import { SubscriptionStatus } from 'generated/prisma';
 
 @Injectable()
 export class AuthService {
@@ -77,5 +78,29 @@ export class AuthService {
         fullName: data.fullName,
       },
     });
+  }
+
+  async isSubscribed(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      return false;
+    }
+
+    const subscription = await this.prisma.subscription.findMany({
+      where: {
+        userId,
+        status: SubscriptionStatus.ACTIVE,
+        endDate: { gte: new Date() },
+      },
+    });
+
+    if (!subscription || subscription.length === 0) {
+      return false;
+    }
+
+    return true;
   }
 }

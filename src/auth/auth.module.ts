@@ -25,5 +25,6 @@ import { APP_GUARD } from '@nestjs/core';
     JwtStrategy,
     { provide: APP_GUARD, useClass: AuthGuard },
   ],
+  exports: [AuthService],
 })
 export class AuthModule {}

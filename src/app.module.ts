@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PaymentModule } from './payment/payment.module';
 import { CommonModule } from './common/common.module';
 import { AuthModule } from './auth/auth.module';
+import { ClassModule } from './class/class.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthModule } from './auth/auth.module';
     CommonModule,
     PaymentModule,
     AuthModule,
+    ClassModule,
   ],
   controllers: [AppController],
   providers: [AppService],
