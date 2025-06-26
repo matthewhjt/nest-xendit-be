@@ -115,8 +115,18 @@ model Chapter {
   updatedAt DateTime @updatedAt() @db.Timestamptz()
   id        String   @id @default(uuid())
   title     String
-  content   String
-  isFree    Boolean  @default(false)
   class     Class    @relation(fields: [classId], references: [id])
   classId   String
+  subchapters SubChapter[]
+}
+
+model SubChapter {
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  updatedAt DateTime @updatedAt() @db.Timestamptz()
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  isFree    Boolean  @default(false)
+  chapter   Chapter  @relation(fields: [chapterId], references: [id])
+  chapterId String
 }
