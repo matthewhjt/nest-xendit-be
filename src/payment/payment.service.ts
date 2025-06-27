@@ -241,38 +241,24 @@ export class PaymentService {
       throw new NotFoundException('User not found');
     }
 
-    const subscriptions = await this.prisma.subscription.findMany({
+    const payments = await this.prisma.payment.findMany({
       where: { userId: user.id },
       include: {
-        payment: {
-          select: {
-            id: true,
-            paymentMethod: true,
-            amount: true,
-            status: true,
-            expiresAt: true,
-            paymentUrl: true,
-          },
-        },
         subscriptionPlan: true,
+        subscription: true,
       },
-      orderBy: { startDate: 'desc' },
+      orderBy: { createdAt: 'desc' },
     });
 
-    const mappedSubscriptions = subscriptions.map((subscription) => ({
-      ...subscription,
-      payment: subscription.payment
-        ? {
-            ...subscription.payment,
-            paymentUrl:
-              subscription.payment.status === PaymentStatus.PAID ||
-              subscription.payment.status === PaymentStatus.EXPIRED
-                ? null
-                : subscription.payment.paymentUrl,
-          }
-        : null,
+    const mappedPayments = payments.map((payment) => ({
+      ...payment,
+      paymentUrl:
+        payment.status === PaymentStatus.PAID ||
+        payment.status === PaymentStatus.EXPIRED
+          ? null
+          : payment.paymentUrl,
     }));
 
-    return mappedSubscriptions;
+    return mappedPayments;
   }
 }
