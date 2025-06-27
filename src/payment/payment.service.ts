@@ -35,6 +35,14 @@ export class PaymentService {
     });
   }
 
+  async getSubscriptionPackages() {
+    const packages = await this.prisma.subscriptionPlan.findMany({
+      where: { isActive: true },
+      orderBy: { price: 'asc' },
+    });
+    return packages;
+  }
+
   async subscribePackage(data: SubscribeDTO, userId: string) {
     return await this.prisma.$transaction(async (tx) => {
       const user = await tx.user.findUnique({

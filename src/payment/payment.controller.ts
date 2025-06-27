@@ -21,6 +21,22 @@ export class PaymentController {
     private readonly responseUtil: ResponseUtil
   ) {}
 
+  @Public()
+  @Get('packages')
+  @HttpCode(HttpStatus.OK)
+  async getSubscriptionPackages() {
+    const packages = await this.paymentService.getSubscriptionPackages();
+    return this.responseUtil.response(
+      {
+        message: 'Subscription Packages Retrieved Successfully',
+        statusCode: 200,
+      },
+      {
+        data: packages,
+      }
+    );
+  }
+
   @Get('history')
   @HttpCode(HttpStatus.OK)
   async getSubscriptionHistory(@GetUser() user: User) {
