@@ -35,7 +35,7 @@ export class ClassController {
     @GetUser() user: User,
     @Param('classId') classId: string
   ) {
-    const classDetails = await this.classService.getClassChaptersById(
+    const classDetails = await this.classService.getClassDetailsById(
       classId,
       user
     );
