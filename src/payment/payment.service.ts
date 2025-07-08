@@ -99,7 +99,7 @@ export class PaymentService {
             xenditExternalId: invoice.externalId,
             xenditInvoiceId: null,
             amount: subscriptionPackage.price.toNumber(),
-            paymentMethod: null,
+            paymentMethod: data.paymentMethod as PaymentMethod,
             createdAt: new Date(),
             updatedAt: new Date(),
             expiresAt: invoice.expiryDate ? new Date(invoice.expiryDate) : null,
