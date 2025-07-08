@@ -4,7 +4,9 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Headers,
   Post,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { ResponseUtil } from 'src/common/utils/response.util';
@@ -13,12 +15,14 @@ import { User } from 'generated/prisma';
 import { SubscribeDTO } from './dto/subscribe.dto';
 import { InvoiceCallback } from 'xendit-node/invoice/models';
 import { Public } from 'src/common/decorators/public.decorator';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('payments')
 export class PaymentController {
   constructor(
     private readonly paymentService: PaymentService,
-    private readonly responseUtil: ResponseUtil
+    private readonly responseUtil: ResponseUtil,
+    private readonly configService: ConfigService
   ) {}
 
   @Public()
@@ -75,7 +79,17 @@ export class PaymentController {
   @Public()
   @Post('xendit/webhook')
   @HttpCode(HttpStatus.OK)
-  async xenditWebhook(@Body() data: InvoiceCallback) {
+  async xenditWebhook(
+    @Body() data: InvoiceCallback,
+    @Headers('x-callback-token') callbackToken: string
+  ) {
+    console.log('callback token:', callbackToken);
+    const expectedToken = this.configService.get<string>(
+      'XENDIT_WEBHOOK_TOKEN'
+    );
+    if (!expectedToken || callbackToken !== expectedToken) {
+      throw new UnauthorizedException('Invalid Xendit callback token');
+    }
     const response = await this.paymentService.handleInvoiceCallback(data);
     return this.responseUtil.response(
       {
